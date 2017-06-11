@@ -17,6 +17,9 @@ import android.widget.BaseAdapter
 import android.widget.Toast
 import android.content.pm.PackageManager
 import android.widget.ListView
+import android.view.InputDevice.getDevice
+
+
 
 
 /**
@@ -55,7 +58,6 @@ class DeviceScanActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onResume() {
         super.onResume()
 
@@ -70,7 +72,7 @@ class DeviceScanActivity : AppCompatActivity() {
         val listAdapter = findViewById(R.id.devicesListView) as ListView
         listAdapter.adapter = mLeDeviceListAdapter
         listAdapter.setOnItemClickListener({ parent, view, position, id ->
-            val device = mLeDeviceListAdapter!!.getDevice(position)
+            /*val device = mLeDeviceListAdapter!!.getDevice(position)
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("DEVICE_NAME", device!!.name)
             intent.putExtra("DEVICE_ADDRESS", device!!.address)
@@ -79,7 +81,17 @@ class DeviceScanActivity : AppCompatActivity() {
                 mScanning = false
             }
             setResult(RESULT_BLE_OK, intent)
-            finish()
+            finish()*/
+            val device = mLeDeviceListAdapter!!.getDevice(position)
+            //if (device == null) return
+            val intent = Intent(this, DeviceControlActivity::class.java)
+            intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device!!.name)
+            intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.address)
+            if (mScanning) {
+                mBluetoothAdapter!!.stopLeScan(mLeScanCallback)
+                mScanning = false
+            }
+            startActivity(intent)
         })
     }
 

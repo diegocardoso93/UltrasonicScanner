@@ -53,6 +53,8 @@ void setup() {
   blePeripheral.addAttribute(bleCharacteristic);
 
   blePeripheral.begin();
+  while(!Serial);
+  Serial.write("start");
 }
 
 int analogVal = 0;
@@ -70,6 +72,8 @@ void loop() {
     Serial.println("Package received.");
     blePack = byteArrayToPackage(blePack, bleCharacteristic.value());
     if (checkSecurityKey(blePack.sk)) {
+      Serial.print(calcultateChecksum(blePack));
+      Serial.print(blePack.crc);
       if (calcultateChecksum(blePack) == blePack.crc) {
         if (blePack.payload[0]==SET_SCANNER_REFRESH_RATE) {
           refreshRate = blePack.payload[1];
@@ -137,8 +141,7 @@ Package byteArrayToPackage(Package p, const unsigned char m[]) {
 }
 
 byte calcultateChecksum(Package p) {
-  byte result=0;
-  result ^= p.iot;
+  byte result = p.iot;
   for(byte i=0;i<8;i++){
     result ^= p.sk[i];
   }

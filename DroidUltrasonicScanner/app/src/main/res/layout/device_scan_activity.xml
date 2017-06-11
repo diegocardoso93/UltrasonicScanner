@@ -3,9 +3,20 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
     <ListView
         android:id="@+id/devicesListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    </LinearLayout>
+    
+    <FrameLayout
+        android:id="@+id/device_control_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
 </LinearLayout>
