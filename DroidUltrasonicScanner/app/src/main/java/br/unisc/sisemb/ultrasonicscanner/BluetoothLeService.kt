@@ -4,8 +4,6 @@ import android.app.Service
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothDevice
-import android.content.Context.BLUETOOTH_SERVICE
 import android.bluetooth.BluetoothManager
 import android.os.IBinder
 import android.content.Intent
@@ -17,7 +15,6 @@ import android.content.Context
 import android.os.Binder
 import android.util.Log
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
@@ -69,6 +66,7 @@ class BluetoothLeService : Service() {
                                              characteristic: BluetoothGattCharacteristic) {
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic)
         }
+
     }
 
     private fun broadcastUpdate(action: String) {
@@ -79,31 +77,13 @@ class BluetoothLeService : Service() {
     private fun broadcastUpdate(action: String,
                                 characteristic: BluetoothGattCharacteristic) {
         val intent = Intent(action)
-        // This is special handling for the Heart Rate Measurement profile.  Data parsing is
-        // carried out as per profile specifications:
-        // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.uuid)) {
-            val flag = characteristic.properties
-            var format = -1
-            if (flag and 0x01 != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT16
-                Log.d(TAG, "Heart rate format UINT16.")
-            } else {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8
-                Log.d(TAG, "Heart rate format UINT8.")
-            }
-            val heartRate = characteristic.getIntValue(format, 1)!!
-            Log.d(TAG, String.format("Received heart rate: %d", heartRate))
-            intent.putExtra(EXTRA_DATA, heartRate.toString())
-        } else {
-            // For all other profiles, writes the data formatted in HEX.
-            val data = characteristic.value
-            if (data != null && data.size > 0) {
-                val stringBuilder = StringBuilder(data.size)
-                for (byteChar in data)
-                    stringBuilder.append(String.format("%02X ", byteChar))
-                intent.putExtra(EXTRA_DATA, String(data) + "\n" + stringBuilder.toString())
-            }
+
+        val data = characteristic.value
+        if (data != null && data.size > 0) {
+            val stringBuilder = StringBuilder(data.size)
+            for (byteChar in data)
+                stringBuilder.append(String.format("%02X ", byteChar))
+            intent.putExtra(EXTRA_DATA, String(data) + "\n" + stringBuilder.toString())
         }
         sendBroadcast(intent)
     }
@@ -245,52 +225,46 @@ class BluetoothLeService : Service() {
             return
         }
         mBluetoothGatt!!.setCharacteristicNotification(characteristic, enabled)
-        /*
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.uuid)) {
+        if (UUID_SCANNER_SENSOR.equals(characteristic.uuid)) {
             val descriptor = characteristic.getDescriptor(
-                    UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG))
+                    UUID.fromString(CurieBleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG))
             descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
             mBluetoothGatt!!.writeDescriptor(descriptor)
-        }*/
+        }
     }
 
 
     fun readCustomCharacteristic() {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w("errro", "BluetoothAdapter not initialized")
+            Log.w("BluetoothLeServiceError", "BluetoothAdapter not initialized")
             return
         }
-        /*check if the service is available on the device*/
         val mCustomService = mBluetoothGatt!!.getService(UUID.fromString(CurieBleGattAttributes.SCANNER_SENSOR_SERVICE))
         if (mCustomService == null) {
-            Log.w("errro", "Custom BLE Service not found")
+            Log.w("BluetoothLeServiceError", "Custom BLE Service not found")
             return
         }
-        /*get the read characteristic from the service*/
         val mReadCharacteristic = mCustomService!!.getCharacteristic(UUID.fromString(CurieBleGattAttributes.SCANNER_SENSOR_CHARACTERISTIC))
         if (mBluetoothGatt!!.readCharacteristic(mReadCharacteristic) === false) {
-            Log.w("errro", "Failed to read characteristic")
+            Log.w("BluetoothLeServiceError", "Failed to read characteristic")
         }
     }
 
     fun writeCustomCharacteristic(value: ByteArray) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w("errro", "BluetoothAdapter not initialized")
+            Log.w("BluetoothLeServiceError", "BluetoothAdapter not initialized")
             return
         }
-        /*check if the service is available on the device*/
         val mCustomService = mBluetoothGatt!!.getService(UUID.fromString(CurieBleGattAttributes.SCANNER_SENSOR_SERVICE))
         if (mCustomService == null) {
-            Log.w("errro", "Custom BLE Service not found")
+            Log.w("BluetoothLeServiceError", "Custom BLE Service not found")
             return
         }
-        /*get the read characteristic from the service*/
         val mWriteCharacteristic = mCustomService!!.getCharacteristic(UUID.fromString(CurieBleGattAttributes.SCANNER_SENSOR_CHARACTERISTIC))
         mWriteCharacteristic.setValue(value)
         if (mBluetoothGatt!!.writeCharacteristic(mWriteCharacteristic) === false) {
-            Log.w("errro", "Failed to write characteristic")
+            Log.w("BluetoothLeServiceError", "Failed to write characteristic")
         }
-        Log.d("sucesss","yea")
     }
 
     /**
@@ -315,6 +289,6 @@ class BluetoothLeService : Service() {
         val ACTION_GATT_SERVICES_DISCOVERED = "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED"
         val ACTION_DATA_AVAILABLE = "com.example.bluetooth.le.ACTION_DATA_AVAILABLE"
         val EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA"
-        val UUID_HEART_RATE_MEASUREMENT = UUID.fromString(CurieBleGattAttributes.SCANNER_SENSOR_SERVICE)
+        val UUID_SCANNER_SENSOR = UUID.fromString(CurieBleGattAttributes.SCANNER_SENSOR_CHARACTERISTIC)
     }
 }

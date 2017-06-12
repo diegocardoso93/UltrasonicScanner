@@ -1,5 +1,6 @@
 package br.unisc.sisemb.ultrasonicscanner
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -10,6 +11,9 @@ import android.view.Menu
 import android.view.MenuItem
 
 class MainActivity : AppCompatActivity() {
+
+    val deviceControl = DeviceControl()
+
     companion object {
         private val RESULT_BLE_OK = 1
     }
@@ -44,12 +48,39 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_BLE_OK) {
-            Log.d("DEVICE_NAME", data.getStringExtra("DEVICE_NAME"))
-            Log.d("DEVICE_ADDRESS", data.getStringExtra("DEVICE_ADDRESS"))
+            Log.d("DEVICE_NAME", data?.getStringExtra("DEVICE_NAME"))
+            Log.d("DEVICE_ADDRESS", data?.getStringExtra("DEVICE_ADDRESS"))
+
+            deviceControl.mDeviceAddress = data?.getStringExtra("DEVICE_ADDRESS")
+            val gattServiceIntent = Intent(this, BluetoothLeService::class.java)
+            bindService(gattServiceIntent, deviceControl.mServiceConnection, Context.BIND_AUTO_CREATE)
+
+            registerReceiver(deviceControl.mGattUpdateReceiver, deviceControl.makeGattUpdateIntentFilter())
+            if (deviceControl.mBluetoothLeService != null) {
+                val result = deviceControl.mBluetoothLeService!!.connect(deviceControl.mDeviceAddress)
+                Log.d("rds", "Connect request result=" + result)
+            }
         }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (deviceControl.mDeviceAddress != null) {
+            unregisterReceiver(deviceControl.mGattUpdateReceiver)
+            deviceControl.mDeviceAddress = null
+            unbindService(deviceControl.mServiceConnection)
+            deviceControl.mBluetoothLeService = null
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(deviceControl.mServiceConnection)
+        deviceControl.mBluetoothLeService = null
     }
 
 }
