@@ -2,6 +2,7 @@ package br.unisc.sisemb.ultrasonicscanner
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Canvas
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
@@ -13,6 +14,7 @@ import android.view.MenuItem
 class MainActivity : AppCompatActivity() {
 
     val deviceControl = DeviceControl()
+    var mScannerView: ScannerView? = null
 
     companion object {
         private val RESULT_BLE_OK = 1
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(deviceScanIntent, RESULT_BLE_OK)
         }
 
+        mScannerView = findViewById(R.id.scannerView) as ScannerView
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -42,6 +45,9 @@ class MainActivity : AppCompatActivity() {
         val id = item.itemId
 
         if (id == R.id.action_settings) {
+            // test update
+            mScannerView?.angle = 200f
+            mScannerView?.invalidate()
             return true
         }
 
