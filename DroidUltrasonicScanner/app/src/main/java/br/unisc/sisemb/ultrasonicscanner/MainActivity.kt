@@ -1,8 +1,9 @@
 package br.unisc.sisemb.ultrasonicscanner
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Canvas
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
@@ -34,6 +35,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         mScannerView = findViewById(R.id.scannerView) as ScannerView
+
+        registerReceiver(broadcastReceiver, IntentFilter("PACKAGE_RECEIVED"));
+    }
+
+    val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            Log.d("MAIN", intent.getStringExtra("package"))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,6 +96,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         unbindService(deviceControl.mServiceConnection)
         deviceControl.mBluetoothLeService = null
+        unregisterReceiver(broadcastReceiver)
     }
 
 }

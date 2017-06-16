@@ -62,6 +62,9 @@ class DeviceControl {
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE == action) {
                 if (intent.getStringExtra(BluetoothLeService.EXTRA_DATA)!=null){
                     Log.d("data", intent.getStringExtra(BluetoothLeService.EXTRA_DATA))
+                    var packageAlert: Intent = Intent("PACKAGE_RECEIVED")
+                    packageAlert.putExtra("package", intent.getStringExtra(BluetoothLeService.EXTRA_DATA))
+                    context.sendBroadcast(packageAlert)
                 }
             }
         }
