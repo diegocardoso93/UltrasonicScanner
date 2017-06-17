@@ -59,7 +59,8 @@ void setup() {
   Serial.write("start");
 }
 
-int analogVal = 0;
+unsigned int analogVal = 0;
+unsigned long pingVal = 0;
 byte bleByteArray[MAX_PACKAGE_SIZE];
 int refreshRate = 5; // samples per second
 int delayRate = 1000/refreshRate;
@@ -116,10 +117,13 @@ void updateScanner() {
 
   blePack.iot = 2;
   blePack.eot = 4;
-  blePack.pl = 4;    
-  blePack.payload[1] = analogVal;
-  blePack.payload[2] = scanner.ping_cm();
-  blePack.payload[3] = refreshRate;
+  blePack.pl = 6;
+  blePack.payload[1] = analogVal < 255 ? analogVal : 255;
+  blePack.payload[2] = analogVal > 255 ? analogVal : 0;
+  pingVal = scanner.ping_cm();
+  blePack.payload[3] = pingVal < 255 ? pingVal : 255;
+  blePack.payload[4] = pingVal > 255 ? pingVal : 0;
+  blePack.payload[5] = refreshRate;
 
   blePack.payload[0] = RESP_READ_SCANNER_SENSOR;
   blePack.crc = calcultateChecksum(blePack);

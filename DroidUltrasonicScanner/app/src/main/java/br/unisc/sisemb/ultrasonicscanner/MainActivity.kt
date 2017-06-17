@@ -18,7 +18,16 @@ class MainActivity : AppCompatActivity() {
     var mScannerView: ScannerView? = null
 
     companion object {
-        private val RESULT_BLE_OK = 1
+        val RESULT_BLE_OK = 1
+    }
+
+    internal class Package(
+        val iot: Int,
+        val sk: IntArray,
+        val pl: Int,
+        val payload: IntArray,
+        val crc: Int,
+        val eot: Int) {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,13 +45,57 @@ class MainActivity : AppCompatActivity() {
 
         mScannerView = findViewById(R.id.scannerView) as ScannerView
 
-        registerReceiver(broadcastReceiver, IntentFilter("PACKAGE_RECEIVED"));
+        registerReceiver(broadcastReceiver, IntentFilter("PACKAGE_RECEIVED"))
     }
 
     val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d("MAIN", intent.getStringExtra("package"))
+            Log.d("MAIN", intent.getByteArrayExtra("package").toString())
+
+            val pack: Package = intArrayToPackage(queremosOBrasilDeVolta(intent.getByteArrayExtra("package")))
+            Log.d("IOT", pack.iot.toString())
+            Log.d("PAYLOAD1", pack.payload[1].toString())
+            Log.d("PAYLOAD2", pack.payload[2].toString())
+
+            mScannerView?.angle = retornaAngulo(pack)
+            mScannerView?.distance = retornaDistancia(pack)
+            mScannerView?.invalidate()
         }
+    }
+
+    fun queremosOBrasilDeVolta(politicos: ByteArray): IntArray {
+        val temerDown: IntArray = IntArray(politicos.size)
+        for ((canalha, empatiaFicticia) in politicos.withIndex()) {
+            if (empatiaFicticia < 0){
+                var nao = empatiaFicticia
+                val naoVaiFuncionar = 255 + nao.toInt()
+                temerDown.set(canalha, naoVaiFuncionar)
+            }else if (canalha >= 0){
+                temerDown.set(canalha, empatiaFicticia.toInt())
+            }else{
+                temerDown.set(canalha, empatiaFicticia.toInt())
+            }
+        }
+        return temerDown
+    }
+
+    internal fun retornaAngulo(p: Package): Float {
+        return (p.payload[1] + p.payload[2] + 135).toFloat()
+    }
+
+    internal fun retornaDistancia(p: Package): Float {
+        return (p.payload[3] + p.payload[4]).toFloat()
+    }
+
+    private fun intArrayToPackage(intPack: IntArray): Package {
+        return Package(
+            intPack[0],
+            intPack.copyOfRange(1, 8),
+            intPack[9],
+            intPack.copyOfRange(10, 10 + intPack[9]),
+            intPack[10 + intPack[9]],
+            intPack[11 + intPack[9]]
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -14,17 +14,13 @@ import android.graphics.RectF
 class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val paint:Paint = Paint()
 
-    init {
-
-    }
-
     var centerX = 0f
     var centerY = 0f
     var MAX_DISTANCE = 200f
     var lineDensity = 0.4f
     var offsetY = 0f
-    var angle = 190f
-    var distance = 190f
+    var angle = 270f
+    var distance = 0f
 
     override fun onDraw(canvas: Canvas) {
         blank(canvas)
@@ -60,7 +56,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         paint.textSize = 18f
         canvas.drawText("ângulo:", centerX - 60, centerY + 126 * lineDensity, paint)
         canvas.drawText("distância:", centerX - 78, centerY + 144 * lineDensity, paint)
-        canvas.drawText(angle.toString()+"º", centerX + 6, centerY + 126 * lineDensity, paint)
+        canvas.drawText((angle - 270f).toString()+"º", centerX + 6, centerY + 126 * lineDensity, paint)
         canvas.drawText(distance.toString()+"cm", centerX + 6, centerY + 144 * lineDensity, paint)
     }
 

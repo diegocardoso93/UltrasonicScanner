@@ -81,9 +81,13 @@ class BluetoothLeService : Service() {
         val data = characteristic.value
         if (data != null && data.size > 0) {
             val stringBuilder = StringBuilder(data.size)
-            for (byteChar in data)
-                stringBuilder.append(String.format("%02X ", byteChar))
-            intent.putExtra(EXTRA_DATA, String(data) + "\n" + stringBuilder.toString())
+            var btArr: ByteArray = ByteArray(data.size)
+            for ((i, byteChar) in data.withIndex()) {
+                btArr!![i] = byteChar
+                stringBuilder.append(String.format("%d ", byteChar))
+            }
+            Log.d("BluetoothLeServiceReceived", String(data) + "\n" + stringBuilder.toString())
+            intent.putExtra(EXTRA_DATA, btArr)
         }
         sendBroadcast(intent)
     }
