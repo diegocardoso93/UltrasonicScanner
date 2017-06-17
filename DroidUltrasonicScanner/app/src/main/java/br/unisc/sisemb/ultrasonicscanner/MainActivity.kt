@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.d("MAIN", intent.getByteArrayExtra("package").toString())
 
-            val pack: Package = intArrayToPackage(queremosOBrasilDeVolta(intent.getByteArrayExtra("package")))
+            val pack: Package = intArrayToPackage(byteArrayToIntArray(intent.getByteArrayExtra("package")))
             Log.d("IOT", pack.iot.toString())
             Log.d("PAYLOAD1", pack.payload[1].toString())
             Log.d("PAYLOAD2", pack.payload[2].toString())
@@ -63,20 +63,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun queremosOBrasilDeVolta(politicos: ByteArray): IntArray {
-        val temerDown: IntArray = IntArray(politicos.size)
-        for ((canalha, empatiaFicticia) in politicos.withIndex()) {
-            if (empatiaFicticia < 0){
-                var nao = empatiaFicticia
-                val naoVaiFuncionar = 255 + nao.toInt()
-                temerDown.set(canalha, naoVaiFuncionar)
-            }else if (canalha >= 0){
-                temerDown.set(canalha, empatiaFicticia.toInt())
+    fun byteArrayToIntArray(pack: ByteArray): IntArray {
+        val packIntArray: IntArray = IntArray(pack.size)
+        for ((i, byteChar) in pack.withIndex()) {
+            if (byteChar < 0){
+                val unsignedVal = 255 + byteChar.toInt()
+                packIntArray.set(i, unsignedVal)
             }else{
-                temerDown.set(canalha, empatiaFicticia.toInt())
+                packIntArray.set(i, byteChar.toInt())
             }
         }
-        return temerDown
+        return packIntArray
     }
 
     internal fun retornaAngulo(p: Package): Float {
