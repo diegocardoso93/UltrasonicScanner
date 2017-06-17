@@ -34,16 +34,15 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
         paint.setARGB(255, 0, 139, 0)
         paint.strokeWidth = 3f
-        val rectF = RectF(0f, offsetY, width, height)
-        canvas.drawArc(rectF, 135f, 270f, true, paint)
+        canvas.drawArc(RectF(0f, offsetY, width, height), 135f, 270f, true, paint)
 
         drawGuideLines(canvas)
 
-        var dist = distance * lineDensity
-        var angleRadians = (Math.PI / 180f) * angle
-        var offY = offsetY/2
-        var x = centerX + (Math.cos(angleRadians) * dist)
-        var y = centerY + offY + (Math.sin(angleRadians) * dist)
+        val dist = distance * lineDensity
+        val angleRadians = (Math.PI / 180f) * angle
+        val offY = offsetY/2
+        val x = centerX + (Math.cos(angleRadians) * dist)
+        val y = centerY + offY + (Math.sin(angleRadians) * dist)
         paint.setARGB(255, 0, 0, 0)
         paint.strokeWidth = 6f
         canvas.drawLine(centerX, centerY + offY, x.toFloat(), y.toFloat(), paint)
@@ -66,14 +65,14 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     fun drawGuideLines(canvas: Canvas) {
-        var angles = floatArrayOf(0f,45f,135f,180f,225f,270f,315f)
+        val angles = floatArrayOf(0f, 45f, 135f, 180f, 225f, 270f, 315f)
         paint.setARGB(100, 0, 252, 0)
         paint.strokeWidth = 4f
         for (a in angles) {
-            var angleRadians1 = (Math.PI / 180f) * a
-            var offY = offsetY/2
-            var x = centerX + (Math.cos(angleRadians1) * MAX_DISTANCE * lineDensity)
-            var y = centerY + offY + (Math.sin(angleRadians1) * MAX_DISTANCE * lineDensity)
+            val angleRadians1 = (Math.PI / 180f) * a
+            val offY = offsetY/2
+            val x = centerX + (Math.cos(angleRadians1) * MAX_DISTANCE * lineDensity)
+            val y = centerY + offY + (Math.sin(angleRadians1) * MAX_DISTANCE * lineDensity)
             canvas.drawLine(centerX, centerY + offY, x.toFloat(), y.toFloat(), paint)
         }
     }

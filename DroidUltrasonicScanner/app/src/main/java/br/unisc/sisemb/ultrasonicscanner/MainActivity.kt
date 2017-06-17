@@ -50,12 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d("MAIN", intent.getByteArrayExtra("package").toString())
-
             val pack: Package = intArrayToPackage(byteArrayToIntArray(intent.getByteArrayExtra("package")))
-            Log.d("IOT", pack.iot.toString())
-            Log.d("PAYLOAD1", pack.payload[1].toString())
-            Log.d("PAYLOAD2", pack.payload[2].toString())
 
             mScannerView?.angle = retornaAngulo(pack)
             mScannerView?.distance = retornaDistancia(pack)
