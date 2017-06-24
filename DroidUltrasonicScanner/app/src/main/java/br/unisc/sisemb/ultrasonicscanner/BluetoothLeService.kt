@@ -288,11 +288,11 @@ class BluetoothLeService : Service() {
         private val STATE_DISCONNECTED = 0
         private val STATE_CONNECTING = 1
         private val STATE_CONNECTED = 2
-        val ACTION_GATT_CONNECTED = "com.example.bluetooth.le.ACTION_GATT_CONNECTED"
-        val ACTION_GATT_DISCONNECTED = "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED"
-        val ACTION_GATT_SERVICES_DISCOVERED = "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED"
-        val ACTION_DATA_AVAILABLE = "com.example.bluetooth.le.ACTION_DATA_AVAILABLE"
-        val EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA"
+        val ACTION_GATT_CONNECTED = "br.unisc.sisemb.ultrasonicscanner.ACTION_GATT_CONNECTED"
+        val ACTION_GATT_DISCONNECTED = "br.unisc.sisemb.ultrasonicscanner.ACTION_GATT_DISCONNECTED"
+        val ACTION_GATT_SERVICES_DISCOVERED = "br.unisc.sisemb.ultrasonicscanner.ACTION_GATT_SERVICES_DISCOVERED"
+        val ACTION_DATA_AVAILABLE = "br.unisc.sisemb.ultrasonicscanner.ACTION_DATA_AVAILABLE"
+        val EXTRA_DATA = "br.unisc.sisemb.ultrasonicscanner.EXTRA_DATA"
         val UUID_SCANNER_SENSOR = UUID.fromString(CurieBleGattAttributes.SCANNER_SENSOR_CHARACTERISTIC)
     }
 }

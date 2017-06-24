@@ -18,6 +18,8 @@
 #define MAX_PACKAGE_SIZE  20
 #define SECURITY_KEY      {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07}
 #define FAKE_SECURITY_KEY {0x07,0x06,0x05,0x04,0x03,0x02,0x01,0x00}
+#define IOT               0x02
+#define EOT               0x04
 NewPing scanner(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 BLEPeripheral blePeripheral;
@@ -67,6 +69,7 @@ byte bleByteArray[MAX_PACKAGE_SIZE];
 int refreshRate = 5; // samples per second
 int delayRate = 1000/refreshRate;
 boolean stopped = true;
+unsigned int maxDistance = 200;
 
 void loop() {
 
@@ -88,17 +91,20 @@ void loop() {
             } else if (blePack.payload[0]==REQ_STOP_MESSAGES) {
               Serial.println("Stopping send messages.");
               stopped = true;
+              stopSendMessage();
             } else if (blePack.payload[0]==REQ_SET_SCANNER_REFRESH_RATE) {
               refreshRate = blePack.payload[1];
               if (refreshRate>0) {
                 Serial.print("Set refresh rate to: ");
                 Serial.println(refreshRate);
                 delayRate = 1000/refreshRate;
+                refreshRateSendMessage();
               }
-            } else if (blePack.payload[0]==REQ_SET_SCANNER_REFRESH_RATE) {
+            } else if (blePack.payload[0]==REQ_SET_SCANNER_MAX_DISTANCE) {
+              maxDistance = blePack.payload[1] + blePack.payload[2];
               Serial.print("Set max distance to: ");
-              Serial.println(blePack.payload[1]);
-              NewPing scanner(TRIGGER_PIN, ECHO_PIN, blePack.payload[1]);
+              Serial.println(maxDistance);
+              maxDistanceSendMessage();
             } else {
               Serial.println("Invalid request.");
             }
@@ -114,7 +120,7 @@ void loop() {
       if (currentMillis - previousMillis >= delayRate && !stopped) {
         previousMillis = currentMillis;
         if (checkSecurityKey(blePack.sk)) {
-          updateScanner();
+          updateScannerSendMessage();
         }
       }
     }
@@ -125,27 +131,59 @@ void loop() {
   }
 }
 
-void updateScanner() {
+void updateScannerSendMessage() {
   //    0 --->   0 degrees
   // 1024 ---> 270 degrees  (default pot max rotation)
   analogVal = analogRead(A0);
   analogVal *= 0.263671875; // 0 ~ 270
 
-  blePack.iot = 2;
-  blePack.eot = 4;
-  blePack.pl = 6;
+  blePack.iot = IOT;
+  blePack.eot = EOT;
+  blePack.pl = 8;
   blePack.payload[1] = analogVal < 255 ? analogVal : 255;
   blePack.payload[2] = analogVal > 255 ? analogVal - 255 : 0;
-  pingVal = scanner.ping_cm();
+  pingVal = scanner.ping_cm(maxDistance);
   blePack.payload[3] = pingVal < 255 ? pingVal : 255;
   blePack.payload[4] = pingVal > 255 ? pingVal - 255 : 0;
   blePack.payload[5] = refreshRate;
+  blePack.payload[6] = maxDistance < 255 ? maxDistance : 255;
+  blePack.payload[7] = maxDistance > 255 ? maxDistance - 255 : 0;
 
   blePack.payload[0] = RESP_READ_SCANNER_SENSOR;
   blePack.crc = calcultateChecksum(blePack);
 
   packageToByteArray(bleByteArray, blePack);
-  bleCharacteristic.setValue(bleByteArray, MAX_PACKAGE_SIZE);  
+  bleCharacteristic.setValue(bleByteArray, MAX_PACKAGE_SIZE);
+}
+
+void stopSendMessage() {
+  blePack.iot = IOT;
+  blePack.eot = EOT;
+  blePack.pl = 1;
+  blePack.payload[0] = RESP_STOP_MESSAGES;
+  blePack.crc = calcultateChecksum(blePack);
+  packageToByteArray(bleByteArray, blePack);
+  bleCharacteristic.setValue(bleByteArray, MAX_PACKAGE_SIZE);
+}
+
+void refreshRateSendMessage() {
+  blePack.iot = IOT;
+  blePack.eot = EOT;
+  blePack.pl = 1;
+  blePack.payload[0] = RESP_SET_SCANNER_REFRESH_RATE;
+  blePack.crc = calcultateChecksum(blePack);
+  packageToByteArray(bleByteArray, blePack);
+  bleCharacteristic.setValue(bleByteArray, MAX_PACKAGE_SIZE);
+}
+
+void maxDistanceSendMessage() {
+  blePack.iot = IOT;
+  blePack.eot = EOT;
+  blePack.pl = 1;
+  blePack.payload[0] = RESP_SET_SCANNER_MAX_DISTANCE;
+  blePack.crc = calcultateChecksum(blePack);
+  packageToByteArray(bleByteArray, blePack);
+  bleCharacteristic.setValue(bleByteArray, MAX_PACKAGE_SIZE);
 }
 
 void packageToByteArray(byte m[], Package p) {

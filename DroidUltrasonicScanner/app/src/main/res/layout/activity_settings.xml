@@ -27,12 +27,12 @@
 
 
             <EditText
-                android:id="@+id/inpRefreshRate"
+                android:id="@+id/etRefreshRate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="5"
                 android:imeOptions="actionUnspecified"
-                android:inputType="text"
+                android:inputType="number"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:layout_marginLeft="10dp"
@@ -44,13 +44,13 @@
 
 
         <TextView
-            android:id="@+id/tvDistance"
+            android:id="@+id/tvMaxDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginTop="52dp"
             android:layout_marginLeft="40dp"
-            android:text="Distância (max 500cm)" />
+            android:text="Distância máxima (max 500cm)" />
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_marginTop="55dp"
@@ -58,12 +58,12 @@
             android:id="@+id/textInputLayout">
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/etMaxDistance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="200"
             android:imeOptions="actionUnspecified"
-            android:inputType="text"
+            android:inputType="number"
             android:maxLines="1"
             android:singleLine="true"
             android:layout_marginLeft="10dp"
@@ -74,12 +74,13 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
-            android:id="@+id/btStop"
+            android:id="@+id/btRefreshRate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/btDistance"
+            android:text="Taxa Atualização"
+            android:layout_below="@+id/textInputLayout"
             android:layout_centerHorizontal="true"
-            android:text="Parar" />
+            android:onClick="setRefreshRate"/>
 
         <Button
             android:id="@+id/btDistance"
@@ -87,15 +88,17 @@
             android:layout_height="wrap_content"
             android:text="Distância"
             android:layout_below="@+id/btRefreshRate"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:onClick="setMaxDistance"/>
 
         <Button
-            android:id="@+id/btRefreshRate"
+            android:id="@+id/btStop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Taxa Atualização"
-            android:layout_below="@+id/textInputLayout"
-            android:layout_centerHorizontal="true" />
+            android:layout_below="@+id/btDistance"
+            android:layout_centerHorizontal="true"
+            android:text="Parar"
+            android:onClick="setStop"/>
 
     </RelativeLayout>
 

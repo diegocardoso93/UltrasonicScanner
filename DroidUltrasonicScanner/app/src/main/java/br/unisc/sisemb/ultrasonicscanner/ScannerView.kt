@@ -53,10 +53,10 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         paint.setARGB(255, 0, 0, 0)
         paint.strokeWidth = 1f
         paint.textSize = 18f
-        canvas.drawText("ângulo:", centerX - 60, centerY + 126 * lineDensity, paint)
-        canvas.drawText("distância:", centerX - 78, centerY + 144 * lineDensity, paint)
-        canvas.drawText((angle - 270f).toString()+"º", centerX + 6, centerY + 126 * lineDensity, paint)
-        canvas.drawText(distance.toString()+"cm", centerX + 6, centerY + 144 * lineDensity, paint)
+        canvas.drawText("ângulo:", centerX - 60, centerY + 156, paint)
+        canvas.drawText("distância:", centerX - 78, centerY + 174, paint)
+        canvas.drawText((angle - 270f).toInt().toString()+"º", centerX + 6, centerY + 156, paint)
+        canvas.drawText(distance.toInt().toString()+"cm", centerX + 6, centerY + 174, paint)
     }
 
     fun blank(canvas: Canvas) {
