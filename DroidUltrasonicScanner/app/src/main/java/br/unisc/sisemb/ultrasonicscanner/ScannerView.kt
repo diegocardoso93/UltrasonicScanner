@@ -26,7 +26,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         blank(canvas)
 
         val width = canvas.width.toFloat()
-        offsetY = (canvas.height/2f) - width/2f
+        offsetY = 120f
         val height = width + offsetY
         centerX = width/2f
         centerY = height/2f

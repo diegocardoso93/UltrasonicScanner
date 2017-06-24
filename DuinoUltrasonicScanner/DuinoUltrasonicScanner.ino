@@ -38,9 +38,13 @@ Package blePack;
 enum {
   NOP,
   REQ_READ_SCANNER_SENSOR,
+  REQ_STOP_MESSAGES,
+  REQ_SET_SCANNER_REFRESH_RATE,
+  REQ_SET_SCANNER_MAX_DISTANCE,
   RESP_READ_SCANNER_SENSOR,
-  SET_SCANNER_REFRESH_RATE,
-  SET_SCANNER_MAX_DISTANCE
+  RESP_STOP_MESSAGES,
+  RESP_SET_SCANNER_REFRESH_RATE,
+  RESP_SET_SCANNER_MAX_DISTANCE
 };
 
 long previousMillis = 0;
@@ -55,8 +59,6 @@ void setup() {
   blePeripheral.addAttribute(bleCharacteristic);
 
   blePeripheral.begin();
-  while(!Serial);
-  Serial.write("start");
 }
 
 unsigned int analogVal = 0;
@@ -64,6 +66,7 @@ unsigned long pingVal = 0;
 byte bleByteArray[MAX_PACKAGE_SIZE];
 int refreshRate = 5; // samples per second
 int delayRate = 1000/refreshRate;
+boolean stopped = true;
 
 void loop() {
 
@@ -72,21 +75,34 @@ void loop() {
   if (central) {
     Serial.print("Connected to central: ");
     Serial.println(central.address());
+    stopped = true;
     while (central.connected()) {
       if (bleCharacteristic.written()) {
         Serial.println("Package received.");
         blePack = byteArrayToPackage(blePack, bleCharacteristic.value());
         if (checkSecurityKey(blePack.sk)) {
           if (calcultateChecksum(blePack) == blePack.crc) {
-            if (blePack.payload[0]==SET_SCANNER_REFRESH_RATE) {
+            if (blePack.payload[0]==REQ_READ_SCANNER_SENSOR){
+              Serial.println("Starting send messages.");
+              stopped = false;
+            } else if (blePack.payload[0]==REQ_STOP_MESSAGES) {
+              Serial.println("Stopping send messages.");
+              stopped = true;
+            } else if (blePack.payload[0]==REQ_SET_SCANNER_REFRESH_RATE) {
               refreshRate = blePack.payload[1];
               if (refreshRate>0) {
                 Serial.print("Set refresh rate to: ");
                 Serial.println(refreshRate);
                 delayRate = 1000/refreshRate;
               }
+            } else if (blePack.payload[0]==REQ_SET_SCANNER_REFRESH_RATE) {
+              Serial.print("Set max distance to: ");
+              Serial.println(blePack.payload[1]);
+              NewPing scanner(TRIGGER_PIN, ECHO_PIN, blePack.payload[1]);
+            } else {
+              Serial.println("Invalid request.");
             }
-          }else{
+          } else {
             Serial.println("Invalid CRC.");
           }
         } else {
@@ -95,7 +111,7 @@ void loop() {
       }
       
       long currentMillis = millis();
-      if (currentMillis - previousMillis >= delayRate) {
+      if (currentMillis - previousMillis >= delayRate && !stopped) {
         previousMillis = currentMillis;
         if (checkSecurityKey(blePack.sk)) {
           updateScanner();
@@ -119,10 +135,10 @@ void updateScanner() {
   blePack.eot = 4;
   blePack.pl = 6;
   blePack.payload[1] = analogVal < 255 ? analogVal : 255;
-  blePack.payload[2] = analogVal > 255 ? analogVal : 0;
+  blePack.payload[2] = analogVal > 255 ? analogVal - 255 : 0;
   pingVal = scanner.ping_cm();
   blePack.payload[3] = pingVal < 255 ? pingVal : 255;
-  blePack.payload[4] = pingVal > 255 ? pingVal : 0;
+  blePack.payload[4] = pingVal > 255 ? pingVal - 255 : 0;
   blePack.payload[5] = refreshRate;
 
   blePack.payload[0] = RESP_READ_SCANNER_SENSOR;
@@ -166,6 +182,7 @@ byte calcultateChecksum(Package p) {
   for(byte i=0;i<8;i++){
     result ^= p.sk[i];
   }
+  result ^= p.pl;
   for(byte i=0;i<p.pl;i++){
     result ^= p.payload[i];
   }

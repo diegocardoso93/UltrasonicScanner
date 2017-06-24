@@ -23,6 +23,7 @@ class DeviceControl {
     var mGattCharacteristics = ArrayList<ArrayList<BluetoothGattCharacteristic>>()
     var mConnected = false
     var mNotifyCharacteristic: BluetoothGattCharacteristic? = null
+    val INITIAL_PACKAGE : ByteArray = byteArrayOf(0x02,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x01,0x01,0x02,0x04)
 
     // Code to manage Service lifecycle.
     val mServiceConnection = object : ServiceConnection {
@@ -141,7 +142,7 @@ class DeviceControl {
 
     fun writeInit() {
         if (mBluetoothLeService != null){
-            mBluetoothLeService!!.writeCustomCharacteristic(byteArrayOf(0x02,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x01,0x00,0x02,0x04))
+            mBluetoothLeService!!.writeCustomCharacteristic(INITIAL_PACKAGE)
         }
     }
 
