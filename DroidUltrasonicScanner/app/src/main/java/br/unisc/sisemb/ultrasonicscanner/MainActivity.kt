@@ -74,8 +74,10 @@ class MainActivity : AppCompatActivity() {
                 tvConfiguredRefreshRate.text = "Taxa: " + getConfiguredRefreshRateFromPack(pack) + " pacotes/segundo"
                 tvConfiguredMaxDistance.text = "Distância máx.: " + getConfiguredMaxDistanceFromPack(pack) + " cm"
             } else if (pack.payload[0] == Instructions.RESP_SET_SCANNER_REFRESH_RATE.ordinal && validatePackage(pack, checksum)) {
+                updateLabels(arrayPackInt, "recebendo")
                 Toast.makeText(context, "Taxa de atualização modificada com sucesso.", Toast.LENGTH_SHORT).show()
             } else if (pack.payload[0] == Instructions.RESP_SET_SCANNER_MAX_DISTANCE.ordinal && validatePackage(pack, checksum)){
+                updateLabels(arrayPackInt, "recebendo")
                 Toast.makeText(context, "Distância máxima modificada com sucesso.", Toast.LENGTH_SHORT).show()
             } else if (pack.payload[0] == Instructions.RESP_STOP_MESSAGES.ordinal && validatePackage(pack, checksum)) {
                 updateLabels(arrayPackInt, "parado")

@@ -64,6 +64,9 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
     }
 
+    /*
+     *
+     */
     fun drawGuideLines(canvas: Canvas) {
         val angles = floatArrayOf(0f, 45f, 135f, 180f, 225f, 270f, 315f)
         paint.setARGB(100, 0, 252, 0)
