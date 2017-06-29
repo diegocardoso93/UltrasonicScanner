@@ -101,7 +101,7 @@ fun getPackAsFormattedString(data: IntArray): String {
 
     val stringBuilder = StringBuilder(data.size)
     for ( inteiro in data) {
-        stringBuilder.append(String.format("%d ", inteiro))
+        stringBuilder.append(String.format("%d\n", inteiro))
     }
     return stringBuilder.toString()
 

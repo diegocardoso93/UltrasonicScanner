@@ -6,8 +6,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.graphics.RectF
-import android.util.Log
-import java.security.SecureRandom
 import java.util.*
 
 
