@@ -18,7 +18,7 @@ class SettingsActivity : AppCompatActivity() {
     fun setRefreshRate(v: View) {
         val etRefreshRate: EditText = findViewById(R.id.etRefreshRate) as EditText
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("REFRESH_RATE_SELECTED", if (etRefreshRate.text.toString().length>0) etRefreshRate.text.toString() else "5")
+        intent.putExtra("REFRESH_RATE_SELECTED", if (etRefreshRate.text.toString().length>0) etRefreshRate.text.toString() else "6")
         setResult(RESULT_SETTINGS_SELECTED, intent)
         finish()
     }
@@ -26,7 +26,7 @@ class SettingsActivity : AppCompatActivity() {
     fun setMaxDistance(v: View) {
         val etMaxDistance: EditText = findViewById(R.id.etMaxDistance) as EditText
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("MAX_DISTANCE_SELECTED", if (etMaxDistance.text.toString().length>0) etMaxDistance.text.toString() else "200")
+        intent.putExtra("MAX_DISTANCE_SELECTED", if (etMaxDistance.text.toString().length>0) etMaxDistance.text.toString() else "250")
         setResult(RESULT_SETTINGS_SELECTED, intent)
         finish()
     }

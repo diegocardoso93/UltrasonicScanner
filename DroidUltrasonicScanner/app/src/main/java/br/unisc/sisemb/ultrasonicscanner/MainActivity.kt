@@ -40,8 +40,8 @@ class MainActivity : AppCompatActivity() {
             }
             val deviceScanIntent = Intent(this, DeviceScanActivity::class.java)
             startActivityForResult(deviceScanIntent, RESULT_BLE_OK)
-            var tvStatus: TextView = findViewById(R.id.tvStatus) as TextView
-            tvStatus.setText("Status: parado")
+            //var tvStatus: TextView = findViewById(R.id.tvStatus) as TextView
+            //tvStatus.setText("Status: parado")
         }
         val fabSettings = findViewById(R.id.config) as FloatingActionButton
         fabSettings.setOnClickListener { view ->
@@ -63,24 +63,25 @@ class MainActivity : AppCompatActivity() {
             if (pack.payload[0] == Instructions.RESP_READ_SCANNER_SENSOR.ordinal && validatePackage(pack, checksum)) {
                 mScannerView?.MAX_DISTANCE = getConfiguredMaxDistanceFromPack(pack).toFloat()
                 mScannerView?.angle = getAngleFromPack(pack)
-                mScannerView?.distance = getDistanceFromPack(pack)
+                val distance = getDistanceFromPack(pack)
+                mScannerView?.distance = distance
+                mScannerView?.insertGraphPoint(distance)
                 mScannerView?.invalidate()
-
                 packSend = MessageTemplates().REQ_READ_SCANNER_SENSOR_PACKAGE_TEMPLATE
-                updateLabels(arrayPackInt, "recebendo")
+                //updateLabels(arrayPackInt, "recebendo")
 
                 val tvConfiguredRefreshRate = findViewById(R.id.tvConfiguredRefreshRate) as TextView
                 val tvConfiguredMaxDistance = findViewById(R.id.tvConfiguredMaxDistance) as TextView
                 tvConfiguredRefreshRate.text = "Taxa: " + getConfiguredRefreshRateFromPack(pack) + " pacotes/segundo"
                 tvConfiguredMaxDistance.text = "Distância máx.: " + getConfiguredMaxDistanceFromPack(pack) + " cm"
             } else if (pack.payload[0] == Instructions.RESP_SET_SCANNER_REFRESH_RATE.ordinal && validatePackage(pack, checksum)) {
-                updateLabels(arrayPackInt, "recebendo")
+                //updateLabels(arrayPackInt, "recebendo")
                 Toast.makeText(context, "Taxa de atualização modificada com sucesso.", Toast.LENGTH_SHORT).show()
             } else if (pack.payload[0] == Instructions.RESP_SET_SCANNER_MAX_DISTANCE.ordinal && validatePackage(pack, checksum)){
-                updateLabels(arrayPackInt, "recebendo")
+                //updateLabels(arrayPackInt, "recebendo")
                 Toast.makeText(context, "Distância máxima modificada com sucesso.", Toast.LENGTH_SHORT).show()
             } else if (pack.payload[0] == Instructions.RESP_STOP_MESSAGES.ordinal && validatePackage(pack, checksum)) {
-                updateLabels(arrayPackInt, "parado")
+                //updateLabels(arrayPackInt, "parado")
                 Toast.makeText(context, "Envio de mensagens parado.", Toast.LENGTH_LONG).show()
             } else {
                 Log.d("MainActivity", "Invalid package.");
@@ -135,7 +136,7 @@ class MainActivity : AppCompatActivity() {
         deviceControl.mBluetoothLeService = null
         unregisterReceiver(broadcastReceiver)
     }
-
+/*
     fun updateLabels(arrayPackInt: IntArray, status: String) {
         var tvSended: TextView = findViewById(R.id.tvSended) as TextView
         val pacoteEnviado: String = "Último pacote enviado: \n" + getPackAsFormattedString(byteArrayToIntArray(packSend))
@@ -148,5 +149,5 @@ class MainActivity : AppCompatActivity() {
         var tvStatus: TextView = findViewById(R.id.tvStatus) as TextView
         tvStatus.setText("Status: " + status)
     }
-
+*/
 }

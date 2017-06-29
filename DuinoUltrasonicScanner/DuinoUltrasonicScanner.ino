@@ -14,7 +14,7 @@
 
 #define TRIGGER_PIN       12
 #define ECHO_PIN          11
-#define MAX_DISTANCE      200
+#define MAX_DISTANCE      250
 #define MAX_PACKAGE_SIZE  20
 #define SECURITY_KEY      {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07}
 #define FAKE_SECURITY_KEY {0x07,0x06,0x05,0x04,0x03,0x02,0x01,0x00}
@@ -66,10 +66,10 @@ void setup() {
 unsigned int analogVal = 0;
 unsigned long pingVal = 0;
 byte bleByteArray[MAX_PACKAGE_SIZE];
-int refreshRate = 5; // samples per second
+int refreshRate = 6; // samples per second
 int delayRate = 1000/refreshRate;
 boolean stopped = true;
-unsigned int maxDistance = 200;
+unsigned int maxDistance = 250;
 
 void loop() {
 

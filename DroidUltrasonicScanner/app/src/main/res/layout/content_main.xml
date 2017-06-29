@@ -8,46 +8,6 @@
     tools:context="br.unisc.sisemb.ultrasonicscanner.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="25dp">
-
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:text="Status: parado" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="25dp"
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
-
-            <TextView
-                android:id="@+id/tvSended"
-                android:layout_height="50dp"
-                android:layout_weight="0.5"
-                android:layout_width="match_parent"
-                android:text="" />
-            <TextView
-                android:id="@+id/tvReceived"
-                android:layout_height="50dp"
-                android:layout_weight="0.5"
-                android:layout_width="match_parent"
-                android:text="" />
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
     <br.unisc.sisemb.ultrasonicscanner.ScannerView
         android:id="@+id/scannerView"
         android:layout_width="fill_parent"
@@ -70,13 +30,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="40dp"
             android:layout_marginLeft="80dp">
 
             <TextView
                 android:id="@+id/tvConfiguredRefreshRate"
                 android:layout_height="25dp"
                 android:layout_weight="1"
+                android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:text="" />
 
@@ -91,12 +52,21 @@
                 android:id="@+id/tvConfiguredMaxDistance"
                 android:layout_height="25dp"
                 android:layout_weight="1"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="40dp"
                 android:layout_width="match_parent"
                 android:text="" />
 
         </LinearLayout>
 
+
     </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/testy_img"
+        android:layout_width="300dp"
+        android:layout_height="240dp"
+        android:padding="20px"
+        tools:layout_editor_absoluteY="180dp"
+        tools:layout_editor_absoluteX="0dp" />
 
 </android.support.constraint.ConstraintLayout>
