@@ -76,12 +76,12 @@
         android:layout_marginTop="8dp"
         android:text=""
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="25dp"
         app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/tvSended"
-        android:layout_width="14dp"
+        android:layout_width="24dp"
         android:layout_height="412dp"
         android:layout_marginTop="8dp"
         android:text=""

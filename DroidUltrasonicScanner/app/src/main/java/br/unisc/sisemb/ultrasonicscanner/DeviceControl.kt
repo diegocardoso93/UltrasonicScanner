@@ -75,7 +75,6 @@ class DeviceControl {
         val unknownServiceString = ""
         val unknownCharaString = ""
         val gattServiceData = ArrayList<HashMap<String, String>>()
-        val gattCharacteristicData = ArrayList<ArrayList<HashMap<String, String>>>()
         mGattCharacteristics = ArrayList<ArrayList<BluetoothGattCharacteristic>>()
         // Loops through available GATT Services.
         for (gattService in gattServices) {

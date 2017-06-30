@@ -13,20 +13,19 @@ import java.util.*
  * Created by dieg0 on 16/06/2017.
  */
 class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    private val paint:Paint = Paint()
+    private val paint: Paint = Paint()
 
     var centerX = 0f
     var centerY = 0f
     var MAX_DISTANCE = 250f
     var lineDensity = 0.4f
     var offsetY = 20f
+    val offsetX = 80f
     var angle = 270f
     var distance = 0f
-    val offsetX = 80f
     var graphPoints = arrayListOf<Float>()
 
     init {
-        var i : Int
         val rand = Random()
         for (i in 0..360){
             var x = 30f
@@ -40,7 +39,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     override fun onDraw(canvas: Canvas) {
-        blank(canvas)
+        background(canvas)
 
         val width = 300f
         offsetY = 0f
@@ -82,6 +81,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         canvas.drawText("dx", 10f, 318f, paint)
         canvas.drawText("cm", 10f, 330f, paint)
 
+        // update graph
         for (i in 0..359) {
             paint.setARGB(255, 0, 0, 0)
             paint.strokeWidth = 3f
@@ -94,13 +94,16 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         }
     }
 
-    fun blank(canvas: Canvas) {
+    fun background(canvas: Canvas) {
         paint.setARGB(25, 255, 255, 1)
         canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
     }
 
-    /*
-     *
+    /*  \  |  /
+     *   \ | /
+     *____\|/_____
+     *    / \
+     *   /   \
      */
     fun drawGuideLines(canvas: Canvas) {
         val angles = floatArrayOf(0f, 45f, 135f, 180f, 225f, 270f, 315f)

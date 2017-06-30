@@ -20,6 +20,7 @@
 #define FAKE_SECURITY_KEY {0x07,0x06,0x05,0x04,0x03,0x02,0x01,0x00}
 #define IOT               0x02
 #define EOT               0x04
+
 NewPing scanner(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 BLEPeripheral blePeripheral;
@@ -27,16 +28,17 @@ BLEService bleService("19B10010-E8F2-537E-4F6C-D104768A1214");
 BLECharacteristic bleCharacteristic("19B10011-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite | BLENotify, MAX_PACKAGE_SIZE);
 
 typedef struct PackageTemplate {
-  byte iot; // init of transmission 
-  byte sk[8]; // security key
-  byte pl;  // payload length
-  byte payload[8];
-  byte crc; //crc
-  byte eot;  // end of transmission
+  byte iot;        // init of transmission 
+  byte sk[8];      // security key
+  byte pl;         // payload length
+  byte payload[8]; // data
+  byte crc;        // cyclic redundancy check
+  byte eot;        // end of transmission
 } Package;
 
 Package blePack;
 
+/* Instructions */
 enum {
   NOP,
   REQ_READ_SCANNER_SENSOR,
@@ -49,12 +51,10 @@ enum {
   RESP_SET_SCANNER_MAX_DISTANCE
 };
 
-long previousMillis = 0;
-
 void setup() {
   Serial.begin(9600);
 
-  blePeripheral.setLocalName("ARDUINO 101");
+  blePeripheral.setLocalName("ARDUINO UTRASONIC SCANNER");
   blePeripheral.setAdvertisedServiceUuid(bleService.uuid());
 
   blePeripheral.addAttribute(bleService);
@@ -63,13 +63,14 @@ void setup() {
   blePeripheral.begin();
 }
 
-unsigned int analogVal = 0;
-unsigned long pingVal = 0;
-byte bleByteArray[MAX_PACKAGE_SIZE];
-int refreshRate = 6; // samples per second
-int delayRate = 1000/refreshRate;
-boolean stopped = true;
-unsigned int maxDistance = 250;
+unsigned int analogVal = 0;              // for save read angle
+unsigned long pingVal = 0;               // for save read distance
+byte bleByteArray[MAX_PACKAGE_SIZE];     // final package to send
+int refreshRate = 6;                     // samples per second
+int delayRate = 1000/refreshRate;        // in ms
+long previousMillis = 0;                 // non-blocking time control
+boolean stopped = true;                  // stopp notify control
+unsigned int maxDistance = MAX_DISTANCE; // max distance control
 
 void loop() {
 

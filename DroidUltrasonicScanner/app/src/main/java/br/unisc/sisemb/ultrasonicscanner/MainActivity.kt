@@ -18,9 +18,10 @@ class MainActivity : AppCompatActivity() {
     var mScannerView: ScannerView? = null
     var packSend: ByteArray = byteArrayOf(0)
 
+    // Sub-activities result values
     companion object {
-        val RESULT_BLE_OK = 1;
-        val RESULT_SETTINGS_SELECTED = 2;
+        val RESULT_BLE_OK = 1
+        val RESULT_SETTINGS_SELECTED = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,16 +39,19 @@ class MainActivity : AppCompatActivity() {
                 unbindService(deviceControl.mServiceConnection)
                 deviceControl.mBluetoothLeService = null
             }
+            var tvStatus: TextView = findViewById(R.id.tvStatus) as TextView
+            tvStatus.text = "parado"
             val deviceScanIntent = Intent(this, DeviceScanActivity::class.java)
             startActivityForResult(deviceScanIntent, RESULT_BLE_OK)
-            var tvStatus: TextView = findViewById(R.id.tvStatus) as TextView
-            tvStatus.setText("parado")
         }
+
         val fabSettings = findViewById(R.id.config) as FloatingActionButton
         fabSettings.setOnClickListener { view ->
             val settingsIntent = Intent(this, SettingsActivity::class.java)
             startActivityForResult(settingsIntent, RESULT_SETTINGS_SELECTED)
+            packSend = byteArrayOf(0)
         }
+
         mScannerView = findViewById(R.id.scannerView) as ScannerView
 
         registerReceiver(broadcastReceiver, IntentFilter("PACKAGE_RECEIVED"))
@@ -66,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             registerReceiver(deviceControl.mGattUpdateReceiver, deviceControl.makeGattUpdateIntentFilter())
             if (deviceControl.mBluetoothLeService != null) {
                 val result = deviceControl.mBluetoothLeService!!.connect(deviceControl.mDeviceAddress)
-                Log.d("rds", "Connect request result=" + result)
+                Log.d("MainActivity", "Connect request result = " + result)
             }
         } else if (resultCode == RESULT_SETTINGS_SELECTED) {
             if (data!!.hasExtra("REFRESH_RATE_SELECTED")) {
@@ -101,6 +105,12 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(broadcastReceiver)
     }
 
+    override fun onPause() {
+        super.onPause()
+        var tvStatus: TextView = findViewById(R.id.tvStatus) as TextView
+        tvStatus.text = "parado"
+    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         moveTaskToBack(true)
@@ -120,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                 mScannerView?.distance = distance
                 mScannerView?.insertGraphPoint(distance)
                 mScannerView?.invalidate()
-                packSend = MessageTemplates().REQ_READ_SCANNER_SENSOR_PACKAGE_TEMPLATE
+                packSend = if (packSend.size == 1) MessageTemplates().REQ_READ_SCANNER_SENSOR_PACKAGE_TEMPLATE else packSend
                 updateLabels(arrayPackInt, "recebendo")
 
                 val tvConfiguredRefreshRate = findViewById(R.id.tvConfiguredRefreshRate) as TextView
@@ -144,15 +154,15 @@ class MainActivity : AppCompatActivity() {
 
     internal fun updateLabels(arrayPackInt: IntArray, status: String) {
         var tvSended: TextView = findViewById(R.id.tvSended) as TextView
-        val pacoteEnviado: String = "UPE\n" + getPackAsFormattedString(byteArrayToIntArray(packSend))
-        tvSended.setText(pacoteEnviado)
+        val pacoteEnviado: String = "E\n" + getPackAsFormattedString(byteArrayToIntArray(packSend))
+        tvSended.text = pacoteEnviado
 
         var tvReceived: TextView = findViewById(R.id.tvReceived) as TextView
-        val pacoteRecebido: String = "UPR\n" + getPackAsFormattedString(arrayPackInt)
-        tvReceived.setText(pacoteRecebido)
+        val pacoteRecebido: String = "R\n" + getPackAsFormattedString(arrayPackInt)
+        tvReceived.text = pacoteRecebido
 
         var tvStatus: TextView = findViewById(R.id.tvStatus) as TextView
-        tvStatus.setText(status)
+        tvStatus.text = status
     }
 
 }
