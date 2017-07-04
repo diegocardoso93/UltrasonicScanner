@@ -28,7 +28,6 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     init {
         val rand = Random()
         for (i in 0..360){
-            var x = 30f
             graphPoints.add(i, rand.nextInt(250).toFloat())
         }
     }
@@ -95,7 +94,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     fun background(canvas: Canvas) {
-        paint.setARGB(25, 255, 255, 1)
+        paint.setARGB(255, 248, 248, 248)
         canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
     }
 

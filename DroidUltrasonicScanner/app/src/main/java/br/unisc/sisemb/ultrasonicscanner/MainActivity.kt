@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             }
         } else if (resultCode == RESULT_SETTINGS_SELECTED) {
             if (data!!.hasExtra("REFRESH_RATE_SELECTED")) {
-                packSend = MessageTemplates().SET_REFRESH_RATE_PACKAGE_TEMPLATE
+                packSend = MessageTemplates().REQ_SET_SCANNER_REFRESH_RATE_PACKAGE_TEMPLATE
                 packSend[11] = data!!.getStringExtra("REFRESH_RATE_SELECTED").toByte()
                 val crc = calculateChecksum(intArrayToPackage(byteArrayToIntArray(packSend)))
                 packSend[12] = crc.toByte()
@@ -83,14 +83,14 @@ class MainActivity : AppCompatActivity() {
                 val maxDistSelected = data!!.getStringExtra("MAX_DISTANCE_SELECTED").toInt()
                 val maxDistByte0 = if (maxDistSelected > 255) 255 else maxDistSelected
                 val maxDistByte1 = if (maxDistSelected > 255) maxDistSelected - 255 else 0
-                packSend = MessageTemplates().SET_MAX_DISTANCE_PACKAGE_TEMPLATE
+                packSend = MessageTemplates().REQ_SET_SCANNER_MAX_DISTANCE_TEMPLATE
                 packSend[11] = maxDistByte0.toByte()
                 packSend[12] = maxDistByte1.toByte()
                 val crc = calculateChecksum(intArrayToPackage(byteArrayToIntArray(packSend)))
                 packSend[13] = crc.toByte()
                 deviceControl.writeBle(packSend)
             } else if (data!!.hasExtra("STOP_SELECTED")) {
-                packSend = MessageTemplates().SET_STOP_PACKAGE_TEMPLATE
+                packSend = MessageTemplates().REQ_STOP_MESSAGES_TEMPLATE
                 val crc = calculateChecksum(intArrayToPackage(byteArrayToIntArray(packSend)))
                 packSend[11] = crc.toByte()
                 deviceControl.writeBle(packSend)

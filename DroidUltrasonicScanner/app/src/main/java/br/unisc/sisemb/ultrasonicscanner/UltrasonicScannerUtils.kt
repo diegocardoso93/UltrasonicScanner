@@ -52,9 +52,9 @@ data class MessageTemplates(
     val rstop: Byte = Instructions.REQ_STOP_MESSAGES.ordinal.toByte()
 ) {
     val REQ_READ_SCANNER_SENSOR_PACKAGE_TEMPLATE: ByteArray = byteArrayOf(td.IOT, sk.sk0, sk.sk1, sk.sk2, sk.sk3, sk.sk4, sk.sk5, sk.sk6, sk.sk7, 0x01, 0x01, 0x02, td.EOT)
-    val SET_REFRESH_RATE_PACKAGE_TEMPLATE: ByteArray = byteArrayOf(td.IOT, sk.sk0, sk.sk1, sk.sk2, sk.sk3, sk.sk4, sk.sk5, sk.sk6, sk.sk7, 0x02, rsr, 0x05, 0x06, td.EOT)
-    val SET_MAX_DISTANCE_PACKAGE_TEMPLATE: ByteArray = byteArrayOf(td.IOT, sk.sk0, sk.sk1, sk.sk2, sk.sk3, sk.sk4, sk.sk5, sk.sk6, sk.sk7, 0x03, rsd, d200, 0x00, d200crc, td.EOT)
-    val SET_STOP_PACKAGE_TEMPLATE: ByteArray = byteArrayOf(td.IOT, sk.sk0, sk.sk1, sk.sk2, sk.sk3, sk.sk4, sk.sk5, sk.sk6, sk.sk7, 0x01, rstop, 0x01, td.EOT)
+    val REQ_SET_SCANNER_REFRESH_RATE_PACKAGE_TEMPLATE: ByteArray = byteArrayOf(td.IOT, sk.sk0, sk.sk1, sk.sk2, sk.sk3, sk.sk4, sk.sk5, sk.sk6, sk.sk7, 0x02, rsr, 0x05, 0x06, td.EOT)
+    val REQ_SET_SCANNER_MAX_DISTANCE_TEMPLATE: ByteArray = byteArrayOf(td.IOT, sk.sk0, sk.sk1, sk.sk2, sk.sk3, sk.sk4, sk.sk5, sk.sk6, sk.sk7, 0x03, rsd, d200, 0x00, d200crc, td.EOT)
+    val REQ_STOP_MESSAGES_TEMPLATE: ByteArray = byteArrayOf(td.IOT, sk.sk0, sk.sk1, sk.sk2, sk.sk3, sk.sk4, sk.sk5, sk.sk6, sk.sk7, 0x01, rstop, 0x01, td.EOT)
 }
 
 fun getAngleFromPack(p: Package): Float {
